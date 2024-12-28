@@ -51,7 +51,7 @@ A production-ready Telegram bot template built with Python and the Aiogram frame
 
 2. Install requirements:
    ```bash 
-   ./setup.sh
+   bash setup.sh
    ```
 
 3. Configure environment variables.
