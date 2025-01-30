@@ -10,9 +10,8 @@ from handlers import register_all_handlers
 from handlers.channel_reader import set_telethon_client
 
 async def main():
-    # Load config
+
     config = load_config()
-    
     # Initialize bot and dispatcher with new syntax
     bot = Bot(
         token=config.bot.token,

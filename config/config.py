@@ -1,6 +1,8 @@
-from dataclasses import dataclass
+import os
 from os import getenv
-from dotenv import load_dotenv
+from dataclasses import dataclass
+from dotenv import dotenv_values
+from pathlib import Path
 from typing import Optional
 
 SUBSCRIPTION_PLANS = {
@@ -45,16 +47,21 @@ class Config:
     bot: BotConfig
     telethon: TelethonConfig
 
-def load_config() -> Config:
-    load_dotenv('.env')
+def load_config(env_path: str = '.env') -> Config:
+    # Загружаем переменные напрямую
+    config_values = dotenv_values('.env')
+    
+    bot_token = config_values.get('BOT_TOKEN')
+    if not bot_token:
+        raise ValueError("BOT_TOKEN is not set in .env file")
 
     return Config(
         bot=BotConfig(
-            token=getenv("BOT_TOKEN")
+            token=bot_token
         ),
         telethon=TelethonConfig(
-            api_id=getenv("TELETHON_API_ID"),
-            api_hash=getenv("TELETHON_API_HASH"),
-            channel_username=getenv("CHANNEL_USERNAME", "@telegram")
+            api_id=config_values.get("TELETHON_API_ID"),
+            api_hash=config_values.get("TELETHON_API_HASH"),
+            channel_username=config_values.get("CHANNEL_USERNAME", "@telegram")
         ),
     )

@@ -2,7 +2,7 @@
 
 ## Python Aiogram Payment Integration
 
-A production-ready Telegram bot template built with Python and the Aiogram framework, featuring subscription management, payment processing, and user profiles. Perfect for creating premium Telegram bots with paid features. 🚀
+A production-ready Telegram bot template built with Python and the Aiogram framework, featuring subscription management, payment processing, user profiles, and referral system. Perfect for creating premium Telegram bots with paid features. 🚀
 
 ---
 
@@ -16,10 +16,11 @@ A production-ready Telegram bot template built with Python and the Aiogram frame
 ### User Management
 - 👤 User registration and profiles
 - 📊 Activity tracking
+- 🤝 Referral system with tracking
 
 ### Payment Integration
 - 🔒 Secure payment processing
-- 💸 Telegram starts payment
+- 💸 Telegram stars payment
 - 🧾 Transaction logging
 - 🔍 Payment verification
 - 🤖 Automatic subscription activation
@@ -30,6 +31,16 @@ A production-ready Telegram bot template built with Python and the Aiogram frame
 
 ### Special Features
 - 📰 TG Channel reader (telethon based)
+- 🧠 OpenAI integration for AI features
+- 🔗 Referral program with unique invite links
+
+### Referral System
+- 🔗 Unique referral links for each user
+- 🎁 Reward system for successful referrals
+
+### AI Integration
+- 🤖 OpenAI API integration
+- 💡 AI-powered features and responses
 
 ---
 
@@ -39,6 +50,7 @@ A production-ready Telegram bot template built with Python and the Aiogram frame
 - **Python Version:** 3.9+ 🐍
 - **Architecture:** Modular, event-driven 🏗️
 - **Deployment:** Docker-ready 🐳
+- **AI Integration:** OpenAI API 🧠
 
 ---
 
@@ -54,7 +66,11 @@ A production-ready Telegram bot template built with Python and the Aiogram frame
    ./setup.sh
    ```
 
-3. Configure environment variables.
+3. Configure environment variables:
+   - BOT_TOKEN
+   - OPENAI_API_KEY
+   - TELETHON_API_ID
+   - TELETHON_API_HASH
 
 4. Run the bot:
    ```bash
@@ -66,10 +82,13 @@ A production-ready Telegram bot template built with Python and the Aiogram frame
 ## CONFIGURATION
 
 1. Set up your bot token from `@BotFather`. 🤖
-2. Adjust subscription plans and prices. 📅
-3. Customize messages and notifications. ✉️
-4. Set up logging preferences. 📝
-5. Set up your API ID and API hash for the channel reader. 📰
+2. Configure OpenAI API key. 🧠
+3. Adjust subscription plans and prices. 📅
+4. Customize messages and notifications. ✉️
+5. Set up logging preferences. 📝
+6. Set up your API ID and API hash for the channel reader. 📰
+7. Configure referral rewards and levels. 🎁
+
 ---
 
 ## USE CASES
@@ -79,7 +98,9 @@ A production-ready Telegram bot template built with Python and the Aiogram frame
 - 👥 Subscription-based communities
 - 📚 Educational platforms
 - 💰 Content monetization
-- 📰 Channel summarization, posts fetching and more.
+- 📰 Channel summarization, posts fetching and more
+- 🎯 Affiliate marketing and referral programs
+- 🧠 AI-powered chat and content generation
 
 ---
 

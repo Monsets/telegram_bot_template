@@ -22,7 +22,9 @@ async def init_db():
                 username TEXT,
                 name TEXT,
                 created_at TIMESTAMP NOT NULL,
-                is_active BOOLEAN NOT NULL DEFAULT TRUE
+                is_active BOOLEAN NOT NULL DEFAULT TRUE,
+                referrer_id INTEGER,
+                referral_count INTEGER
             )
         """)
 
@@ -41,17 +43,15 @@ async def init_db():
         
         await db.commit()
 
-async def add_user(user_id: int, username: Optional[str] = None, 
-                  name: Optional[str] = None) -> None:
+async def add_user(user_id: int, username: str, name: str, referrer_id: Optional[int] = None):
     """Add new user to database"""
     async with aiosqlite.connect(DATABASE_PATH) as db:
-        created_at = datetime.now()
         await db.execute(
             """
-            INSERT OR IGNORE INTO users (user_id, username, name, created_at)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO users (user_id, username, name, created_at, referrer_id, referral_count)
+            VALUES (?, ?, ?, ?, ?, ?)
             """,
-            (user_id, username, name, created_at)
+            (user_id, username, name, datetime.now(), referrer_id, 0)
         )
         await db.commit()
 
@@ -72,7 +72,9 @@ async def get_user(user_id: int) -> Optional[User]:
                 username=user_data[2],
                 name=user_data[3],
                 created_at=datetime.fromisoformat(user_data[4]),
-                is_active=bool(user_data[5])
+                is_active=bool(user_data[5]),
+                referrer_id=user_data[6],
+                referral_count=user_data[7]
             )
 
 # Subscription operations
@@ -139,3 +141,16 @@ async def get_active_subscription(user_id: int) -> Optional[Subscription]:
                 end_date=datetime.fromisoformat(sub_data[4]),
                 is_active=bool(sub_data[5])
             )
+
+async def update_referral_count(user_id: int):
+    """Increment referral count for user"""
+    async with aiosqlite.connect(DATABASE_PATH) as db:
+        await db.execute(
+            """
+            UPDATE users 
+            SET referral_count = referral_count + 1 
+            WHERE user_id = ?
+            """,
+            (user_id,)
+        )
+        await db.commit()

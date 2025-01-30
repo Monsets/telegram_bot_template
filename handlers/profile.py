@@ -26,7 +26,12 @@ async def cmd_profile(message: Message):
             "👤 Your Profile:",
             f"ID: {user_id}",
             f"Name: {user.name or 'Not set'}",
-            "\n📊 Subscription Status:"
+            "",
+            "🤝 Referral Program:",
+            f"Invited friends: {user.referral_count}",
+            f"Your referral link: t.me/{(await message.bot.me()).username}?start={user_id}",
+            "",
+            "📊 Subscription Status:"
         ]
         
         if subscription:

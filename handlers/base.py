@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message, ReplyKeyboardRemove
 from services.logger import log_event, log_error
-from database.db_operations import add_user, get_user
+from database.db_operations import add_user, get_user, update_referral_count
 from keyboards.keyboards import main_kb
 from handlers.profile import cmd_profile as profile_command
 from handlers.subscription import cmd_subscription as subscription_command
@@ -15,18 +15,37 @@ async def cmd_start(message: Message):
     log_event(user_id, "start")
     
     try:
+        # Extract referral code from deep link
+        args = message.text.split()
+        referrer_id = int(args[1]) if len(args) > 1 else None
+        
         user = await get_user(user_id)
         if not user:
+            # Create new user with referrer_id
             await add_user(
                 user_id=user_id,
                 username=message.from_user.username,
-                name=message.from_user.full_name
+                name=message.from_user.full_name,
+                referrer_id=referrer_id
             )
             log_event(user_id, "user_add")
+            
+            # If there's a referrer, increment their referral count
+            if referrer_id:
+                await update_referral_count(referrer_id)
+                log_event(user_id, f"referred_by_{referrer_id}")
+        
+        welcome_text = [
+            f"👋 Welcome, {message.from_user.full_name}!",
+            "",
+            "🎁 Invite friends and get rewards!",
+            f"Your referral link: t.me/{(await message.bot.me()).username}?start={user_id}",
+            "",
+            "Use the menu below to navigate:"
+        ]
         
         await message.answer(
-            f"👋 Welcome, {message.from_user.full_name}!\n"
-            "Use the menu below to navigate:",
+            "\n".join(welcome_text),
             reply_markup=main_kb
         )
     except Exception as e:

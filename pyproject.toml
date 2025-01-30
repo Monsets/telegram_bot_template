@@ -12,6 +12,7 @@ python-dotenv = "^1.0.1"
 aiosqlite = "^0.20.0"
 loguru = "^0.7.3"
 telethon = "^1.38.1"
+openai = "^1.60.2"
 
 
 [build-system]
