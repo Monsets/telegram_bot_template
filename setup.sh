@@ -15,4 +15,4 @@ if [ ! -f .env ]; then
 fi
 
 # Create logs directory
-mkdir -p logs 
+mkdir -p logs data

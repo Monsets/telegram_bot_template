@@ -1,39 +1,31 @@
 import datetime
 
 from aiogram import Router, F
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.filters import Command
 from services.logger import log_event, log_error
 from database.db_operations import get_active_subscription
 from keyboards.keyboards import subscription_kb, profile_kb
 
-from config.config import SUBSCRIPTION_PLANS
+from config.config import SUBSCRIPTION_PLANS, REFERRAL_BONUS_DAYS
 
 router = Router()
 
 @router.message(Command("subscription"))
 async def cmd_subscription(message: Message):
-    """Show subscription options menu"""
-    user_id = message.from_user.id
-    log_event(user_id, "subscription_menu")
-    
+    """Handle /subscription command"""
     try:
-        subscription_text = [
-            "📊 Available Subscription Plans:",
-            "",
-            "Choose your plan below:",
-            "• Longer plans = better value",
-            "• All plans include full access",
-            "• Cancel anytime"
-        ]
+        user_id = message.from_user.id
+        log_event(user_id, "subscription_menu")
         
         await message.answer(
-            "\n".join(subscription_text),
+            "Enhance your experience with our subscription plans:",
             reply_markup=subscription_kb
         )
+        
     except Exception as e:
-        log_error(user_id, e, "subscription_menu_error")
-        await message.answer("Error showing subscription options")
+        log_error(message.from_user.id, e, "subscription_command_error")
+        await message.answer("Error showing subscription plans. Please try again later.")
 
 @router.callback_query(F.data == "show_sub")
 async def show_subscription_status(callback: CallbackQuery):

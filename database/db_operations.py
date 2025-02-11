@@ -78,17 +78,28 @@ async def get_user(user_id: int) -> Optional[User]:
             )
 
 # Subscription operations
-async def create_subscription(user_id: int, subscription_type: str, 
-                           start_date: datetime, end_date: datetime) -> None:
-    """Create new subscription"""
+async def create_subscription(user_id: int, subscription_type: str, start_date: datetime, end_date: datetime):
+    """Create or extend subscription"""
     async with aiosqlite.connect(DATABASE_PATH) as db:
-        await db.execute(
+        # First, check if user has active subscription
+        current_sub = await get_active_subscription(user_id)
+        
+        if current_sub:
+            # If subscription exists, extend it
+            new_end_date = max(current_sub.end_date, start_date) + (end_date - start_date)
+            query = """
+                UPDATE subscriptions 
+                SET end_date = $1 
+                WHERE user_id = $2 AND is_active = true
             """
-            INSERT INTO subscriptions (user_id, subscription_type, start_date, end_date)
-            VALUES (?, ?, ?, ?)
-            """,
-            (user_id, subscription_type, start_date, end_date)
-        )
+            await db.execute(query, (new_end_date, user_id))
+        else:
+            # If no subscription, create new one
+            query = """
+                INSERT INTO subscriptions (user_id, subscription_type, start_date, end_date, is_active)
+                VALUES ($1, $2, $3, $4, $5)
+            """
+            await db.execute(query, (user_id, subscription_type, start_date, end_date, True))
         await db.commit()
 
 async def cancel_subscription(user_id: int) -> None:
@@ -154,3 +165,23 @@ async def update_referral_count(user_id: int):
             (user_id,)
         )
         await db.commit()
+
+async def get_active_users() -> List[User]:
+    """Get all active users"""
+    async with aiosqlite.connect(DATABASE_PATH) as db:
+        async with db.execute(
+            "SELECT * FROM users WHERE is_active = TRUE"
+        ) as cursor:
+            users = await cursor.fetchall()
+            return [
+                User(
+                    id=user[0],
+                    user_id=user[1],
+                    username=user[2],
+                    name=user[3],
+                    created_at=datetime.fromisoformat(user[4]),
+                    is_active=bool(user[5]),
+                    referrer_id=user[6],
+                    referral_count=user[7]
+                ) for user in users
+            ]

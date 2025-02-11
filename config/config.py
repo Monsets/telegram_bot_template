@@ -5,6 +5,9 @@ from dotenv import dotenv_values
 from pathlib import Path
 from typing import Optional
 
+# Referral bonus settings
+REFERRAL_BONUS_DAYS = 7  
+
 SUBSCRIPTION_PLANS = {
     "1month": {
         "title": "1 Month",
@@ -29,6 +32,13 @@ SUBSCRIPTION_PLANS = {
         "description": "Access for one year",
         "price": 4,
         "days": 365,
+    },
+    "referral": {
+        "title": "Free Sub for a Friend",
+        "description": f"Get {REFERRAL_BONUS_DAYS} days for each invited friend",
+        "price": 0,
+        "days": REFERRAL_BONUS_DAYS,
+        "is_referral": True  # Маркер для особой обработки в UI
     }
 } 
 
@@ -48,8 +58,7 @@ class Config:
     telethon: TelethonConfig
 
 def load_config(env_path: str = '.env') -> Config:
-    # Загружаем переменные напрямую
-    config_values = dotenv_values('.env')
+    config_values = dotenv_values(env_path)
     
     bot_token = config_values.get('BOT_TOKEN')
     if not bot_token:

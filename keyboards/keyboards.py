@@ -28,12 +28,20 @@ def get_subscription_keyboard() -> InlineKeyboardMarkup:
     
     # Create buttons from subscription plans
     for plan_id, plan in SUBSCRIPTION_PLANS.items():
-        buttons.append([
-            InlineKeyboardButton(
-                text=f"{plan['title']} - {plan['price']}⭐",
-                callback_data=f"sub_{plan_id}"
-            )
-        ])
+        if plan.get('is_referral'):
+            buttons.append([
+                InlineKeyboardButton(
+                    text=f"{plan['title']} - Free!",
+                    callback_data="referral_sub"
+                )
+            ])
+        else:
+            buttons.append([
+                InlineKeyboardButton(
+                    text=f"{plan['title']} - {plan['price']}⭐",
+                    callback_data=f"sub_{plan_id}"
+                )
+            ])
     
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
